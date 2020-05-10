@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RecyclerView</string>
+    <string name="movie_title">The Shawshank Redemption (1994)</string>
+    <string name="movie_synopsis">Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.</string>
+</resources>
