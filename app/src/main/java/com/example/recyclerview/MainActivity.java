@@ -4,17 +4,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
+import android.widget.ProgressBar;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG = "Movies";
-
+    private static final String TAG =
+            MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
-    private MovieAdapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private ProgressBar progressBar;
     private List<MovieEntity> movies;
 
     @Override
@@ -22,28 +35,90 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        movies = SampleData.getMovies();
+        recyclerView = findViewById(R.id.recycler_view);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
-        for (MovieEntity movie : movies) {
-            Log.i(TAG, movie.toString());
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = null;
+
+        if (connectivityManager != null) {
+            networkInfo = connectivityManager.getActiveNetworkInfo();
         }
 
-        // initialise the RecyclerView
-        initRecyclerView();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            new FetchMovies(this).execute();
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    static class FetchMovies extends AsyncTask<Void, Void, String> {
+        private WeakReference<MainActivity> mainActivityWeakReference;
+
+        FetchMovies(MainActivity context) {
+            mainActivityWeakReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            mainActivityWeakReference.get().progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            return NetworkUtils.getMovies();
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            MainActivity mainActivity = mainActivityWeakReference.get();
+            mainActivity.movies = new ArrayList<>();
+
+            try {
+                JSONArray jsonArray = new JSONArray(s);
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    MovieEntity movie =
+                            new MovieEntity(
+                                    i,
+                                    jsonObject.getString("title"),
+                                    jsonObject.getString("synopsis"),
+                                    jsonObject.getInt("year"),
+                                    jsonObject.getString("thumbnail")
+                            );
+
+                    mainActivity.movies.add(movie);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            mainActivity.progressBar.setVisibility(View.GONE);
+            mainActivity.initRecyclerView();
+
+            Log.d(TAG, s);
+        }
     }
 
     private void initRecyclerView() {
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
         // improves the performance of the RecyclerView if items are of fixed size.
         recyclerView.setHasFixedSize(true);
 
         // create and set a LinearLayoutManager
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
         // connect the MovieAdapter to the RecyclerView
-        mAdapter = new MovieAdapter(movies, MainActivity.this);
+        RecyclerView.Adapter mAdapter = new MovieAdapter(movies);
         recyclerView.setAdapter(mAdapter);
+
+        LayoutAnimationController layoutAnimationController
+                = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_from_bottom);
+        recyclerView.setLayoutAnimation(layoutAnimationController);
     }
 }

@@ -2,28 +2,28 @@ package com.example.recyclerview;
 
 public class MovieEntity {
     private int id;
-    private String thumbnail;
     private String title;
     private String synopsis;
     private int year;
+    private String thumbnail;
 
     public MovieEntity() {
 
     }
 
-    public MovieEntity(int id, String thumbnail, String title, String synopsis, int year) {
+    public MovieEntity(int id, String title, String synopsis, int year, String thumbnail) {
         this.id = id;
-        this.thumbnail = thumbnail;
         this.title = title;
         this.synopsis = synopsis;
         this.year = year;
+        this.thumbnail = thumbnail;
     }
 
-    public MovieEntity(String thumbnail, String title, String synopsis, int year) {
-        this.thumbnail = thumbnail;
+    public MovieEntity(String title, String synopsis, int year, String thumbnail) {
         this.title = title;
         this.synopsis = synopsis;
         this.year = year;
+        this.thumbnail = thumbnail;
     }
 
     public int getId() {
@@ -32,14 +32,6 @@ public class MovieEntity {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     public String getTitle() {
@@ -66,14 +58,22 @@ public class MovieEntity {
         this.year = year;
     }
 
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
     @Override
     public String toString() {
         return "MovieEntity{" +
                 "id=" + id +
-                ", thumbnail='" + thumbnail + '\'' +
                 ", title='" + title + '\'' +
                 ", synopsis='" + synopsis + '\'' +
                 ", year=" + year +
+                ", thumbnail='" + thumbnail + '\'' +
                 '}';
     }
 }

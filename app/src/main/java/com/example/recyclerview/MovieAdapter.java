@@ -1,7 +1,7 @@
 package com.example.recyclerview;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +11,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
     private final List<MovieEntity> movies;
-    private final Context mContext;
 
-    public MovieAdapter(List<MovieEntity> movies, Context mContext) {
+    public MovieAdapter(List<MovieEntity> movies) {
         this.movies = movies;
-        this.mContext = mContext;
     }
 
     @NonNull
@@ -30,11 +30,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return new ViewHolder(view);
     }
 
-    public int imageResourceId(Context mContext, String imageName) {
-        return mContext.getResources()
-                .getIdentifier("drawable/" + imageName, null, mContext.getPackageName());
-    }
-
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull MovieAdapter.ViewHolder holder, int position) {
@@ -42,7 +37,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
         holder.movieTitle.setText(String.format("%s (%d)", movie.getTitle(), movie.getYear()));
         holder.movieSynopsis.setText(movie.getSynopsis());
-        holder.movieThumbnail.setImageResource(imageResourceId(mContext, movie.getThumbnail()));
+
+        Glide.with(holder.itemView.getContext())
+                .load(movie.getThumbnail())
+                .fitCenter()
+                .into(holder.movieThumbnail);
     }
 
     @Override
