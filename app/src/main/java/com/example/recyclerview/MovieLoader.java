@@ -14,7 +14,7 @@ public class MovieLoader extends AsyncTaskLoader<String> {
     @Nullable
     @Override
     public String loadInBackground() {
-        return null;
+        return NetworkUtils.getMovies();
     }
 
     @Override
