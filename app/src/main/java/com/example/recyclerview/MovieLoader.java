@@ -16,4 +16,11 @@ public class MovieLoader extends AsyncTaskLoader<String> {
     public String loadInBackground() {
         return null;
     }
+
+    @Override
+    protected void onStartLoading() {
+        super.forceLoad();
+    }
+
+
 }
