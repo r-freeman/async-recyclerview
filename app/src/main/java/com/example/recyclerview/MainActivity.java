@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
 
         if (networkInfo != null && networkInfo.isConnected()) {
+            progressBar.setVisibility(View.VISIBLE);
             getSupportLoaderManager().restartLoader(0, null, this);
 //            new FetchMovies(this).execute();
         } else {
