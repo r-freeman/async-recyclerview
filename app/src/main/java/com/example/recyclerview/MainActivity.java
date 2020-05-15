@@ -67,7 +67,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String data) {
+        movies = new ArrayList<>();
 
+        try {
+            JSONArray jsonArray = new JSONArray(data);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                MovieEntity movie =
+                        new MovieEntity(
+                                i,
+                                jsonObject.getString("title"),
+                                jsonObject.getString("synopsis"),
+                                jsonObject.getInt("year"),
+                                jsonObject.getString("thumbnail")
+                        );
+
+                movies.add(movie);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        progressBar.setVisibility(View.GONE);
+        initRecyclerView();
+
+        Log.d(TAG, data);
     }
 
     @Override
