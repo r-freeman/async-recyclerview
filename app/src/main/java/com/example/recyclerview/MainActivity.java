@@ -58,6 +58,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         } else {
             progressBar.setVisibility(View.GONE);
         }
+
+        if(getSupportLoaderManager().getLoader(0) != null) {
+            getSupportLoaderManager().initLoader(0, null, this);
+        }
     }
 
     @NonNull
