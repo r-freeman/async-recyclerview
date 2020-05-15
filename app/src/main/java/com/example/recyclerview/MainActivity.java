@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +22,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             progressBar.setVisibility(View.GONE);
         }
 
-        if(getSupportLoaderManager().getLoader(0) != null) {
+        if (getSupportLoaderManager().getLoader(0) != null) {
             getSupportLoaderManager().initLoader(0, null, this);
         }
     }
@@ -105,57 +103,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
 
-    }
-
-    static class FetchMovies extends AsyncTask<Void, Void, String> {
-        private WeakReference<MainActivity> mainActivityWeakReference;
-
-        FetchMovies(MainActivity context) {
-            mainActivityWeakReference = new WeakReference<>(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            mainActivityWeakReference.get().progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(Void... voids) {
-            return NetworkUtils.getMovies();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            MainActivity mainActivity = mainActivityWeakReference.get();
-            mainActivity.movies = new ArrayList<>();
-
-            try {
-                JSONArray jsonArray = new JSONArray(s);
-
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                    MovieEntity movie =
-                            new MovieEntity(
-                                    i,
-                                    jsonObject.getString("title"),
-                                    jsonObject.getString("synopsis"),
-                                    jsonObject.getInt("year"),
-                                    jsonObject.getString("thumbnail")
-                            );
-
-                    mainActivity.movies.add(movie);
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            mainActivity.progressBar.setVisibility(View.GONE);
-            mainActivity.initRecyclerView();
-
-            Log.d(TAG, s);
-        }
     }
 
     private void initRecyclerView() {
