@@ -1,6 +1,6 @@
 # Async RecyclerView
 
-This repository is a demonstration of an Android mobile application that uses an AsyncTask that retrieves the [top 250 IMDB movies from a REST API](https://github.com/r-freeman/imdbtop250) and displays the data in a RecyclerView.
+This repository is a demonstration of an Android mobile application that uses an AsyncTask to retrieve the [top 250 IMDB movies from a REST API](https://github.com/r-freeman/imdbtop250) and displays the data in a RecyclerView.
 
 ## Features
 
